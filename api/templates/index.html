@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Portfolio Optimization</title>
+    <style>
+        /* Base styles */
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 2rem;
+            background: #f8f9fa;
+        }
+        
+        /* Plot container styling */
+        .plot-container { 
+            margin: 2rem 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Results section styling */
+        .results-box {
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin: 2rem 0;
+        }
+
+        /* Method comparison styling */
+        .method-result {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+
+        .method-result h3 {
+            color: #1e3a8a;
+            margin: 0 0 1rem 0;
+            font-size: 1.25rem;
+        }
+
+        .method-result ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .method-result li {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .method-result p {
+            margin: 0;
+            color: #059669;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Click info box styling */
+        #click-info {
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-top: 1rem;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        /* Divider styling */
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 2rem 0;
+        }
+
+        /* Typography enhancements */
+        h1 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        h2 {
+            color: #334155;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quantum-Optimized Portfolio</h1>
+    
+    <div class="results-box">
+        <h2>Optimization Results Comparison</h2>
+        {% for result in optimization_results %}
+        <div class="method-result">
+            <h3>{{ result.method }}</h3>
+            <ul>
+                {% for asset in result.assets %}
+                <li>{{ asset }}</li>
+                {% endfor %}
+            </ul>
+            <p>Optimized Value: {{ result.value }}</p>
+        </div>
+        {% if not loop.last %}<div class="divider"></div>{% endif %}
+        {% endfor %}
+    </div>
+
+    <h1>Stock Prices Over Time</h1>
+    <div class="plot-container">
+        {{ plot_html | safe }}
+    </div>
+    
+    <div id="click-info">Click on any data point in the chart to view detailed price information</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var plotDiv = document.getElementById('interactive-plot');
+            if(plotDiv) {
+                plotDiv.on('plotly_click', function(data){
+                    var point = data.points[0];
+                    var stock = point.data.name;
+                    var date = new Date(point.x).toLocaleDateString();
+                    var price = point.y.toFixed(2);
+                    document.getElementById('click-info').innerHTML = `
+                        <strong>${stock}</strong><br>
+                        Date: ${date}<br>
+                        Price: $${price}
+                    `;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
